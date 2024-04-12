@@ -10,7 +10,6 @@ console.log(`El número ${numeroDecimal} en base ${base} es: ${decimalABase(nume
 
 // Funcion que convierte binario a decimal
 let numeroBinario = prompt("Ingresa un número binario"); //no hago el parseInt ahora pq no me funca el .length sino
-console.log(numeroBinario.length);
 console.log(`El número binario ${numeroBinario} en decimal es: ${binarioADecimal(numeroBinario)}`);
 
 
