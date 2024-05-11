@@ -3,9 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>preentrega1</title>
+    <title>Pre Entrega 3</title>
 </head>
 <body>
-    <script src="preentrega1.js"></script>
+    <div id="bienvenida"></div>
+
+    <!-- Formulario de inicio de sesión -->
+    <form id="loginForm" style="display: none;">
+        <label for="nombreUsuario">Nombre de Usuario:</label>
+        <input type="text" id="nombreUsuario">
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+
+    <!-- Botón para cambiar de usuario -->
+    <button id="cambiarUsuario" style="display: none;">Cambiar Usuario</button>
+
+    <section>
+        <h1>Convertidor número decimal a base x</h1>
+        <div id="decimalInput">
+            <label for="numeroDecimal">Ingresa un número decimal:</label>
+            <input type="number" id="numeroDecimal">
+        </div>
+
+        <div id="baseInput">
+            <label for="base">Ingresa la base (entre 2 y 36):</label>
+            <input type="number" id="base" min="2" max="36">
+        </div>
+
+        <button onclick="convertirDecimal()">Convertir</button>
+
+        <div id="resultado"></div>
+    </section>
+
+    <section>
+        <h2>Convertidor de base x a decimal</h2>
+        <p>Ingresa un número y su base y conviertela a decimal</p>
+        <div id="base2Input">
+            <label for="numero2">Ingresa un número:</label>
+            <input type="text" id="numero2">
+        </div>
+        <div id="base2Input">
+            <label for="base2">Ingresa la base (entre 2 y 36):</label>
+            <input type="number" id="base2">
+        </div>
+        <button onclick="convertirBaseADecimal()">Convertir</button>
+
+        <div id="resultado2"></div>
+    </section>
+
+    <section>
+        <h2>Finalizar</h2>
+        <p>Descarga un archivo JSON con el historial de conversiones</p>
+        <p>(Se borraran el historial de calculos realizados.)</p>
+        <button onclick="guardarLSEnArchivo()">Descargar archivo en JSON</button>
+    </section>
+    <script src="preentrega3.js"></script>
 </body>
 </html>

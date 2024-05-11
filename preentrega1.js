@@ -26,9 +26,9 @@ function decimalABase(decimal, base) {
     while (decimal > 0) {        
         let residuo = decimal % base; //obtengo el residuo
         residuos.unshift(digitos[residuo]); //tomo el valor correspondiente a la pocicion del objeto de digitos
-        decimal = Math.floor(decimal / base); //Redondea hacia abajo y con eso obtengo el siguiente valor para el residuo :(
+        decimal = Math.floor(decimal / base); //Redondea hacia abajo y con eso obtengo el siguiente valor para el residuo
     }
-    const resultado = residuos.join(''); //hago el join para quitar las comas que agrego en el push
+    const resultado = residuos.join(''); //hago el join para quitar las comas que agrego en el unshift
     return resultado;
 }
 
@@ -45,3 +45,6 @@ function binarioADecimal(binario) {
 }
 
 //TODO: hacer el frontEnd
+//TODO: agregar una funcion de codigo de hamming
+//TODO: funciones para de cualquier base a decimal
+//TODO: agregar funciones para realizar funciones arimeticas con las diferentes bases
