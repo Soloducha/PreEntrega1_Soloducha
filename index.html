@@ -1,62 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pre Entrega 3</title>
+    <title>Convertidor de Bases</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- Toastify JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-<body>
-    <div id="bienvenida"></div>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div id="bienvenida" class="text-center mb-4"></div>
 
-    <!-- Formulario de inicio de sesión -->
-    <form id="loginForm" style="display: none;">
-        <label for="nombreUsuario">Nombre de Usuario:</label>
-        <input type="text" id="nombreUsuario">
-        <button type="submit">Iniciar Sesión</button>
-    </form>
+        <!-- Formulario de inicio de sesión -->
+        <form id="loginForm" class="text-center mb-4" style="display: none;">
+            <div class="form-group">
+                <label for="nombreUsuario">Nombre de Usuario:</label>
+                <input type="text" id="nombreUsuario" class="form-control" placeholder="Ingresa tu nombre">
+            </div>
+            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </form>
 
-    <!-- Botón para cambiar de usuario -->
-    <button id="cambiarUsuario" style="display: none;">Cambiar Usuario</button>
-
-    <section>
-        <h1>Convertidor número decimal a base x</h1>
-        <div id="decimalInput">
-            <label for="numeroDecimal">Ingresa un número decimal:</label>
-            <input type="number" id="numeroDecimal">
+        <!-- Botón para cambiar de usuario -->
+        <div class="text-center mb-4">
+            <button id="cambiarUsuario" class="btn btn-warning" style="display: none;">Cambiar Usuario</button>
         </div>
 
-        <div id="baseInput">
-            <label for="base">Ingresa la base (entre 2 y 36):</label>
-            <input type="number" id="base" min="2" max="36">
-        </div>
+        <section class="card p-4 mb-4">
+            <h2 class="card-title text-center">Convertidor número decimal a base x</h2>
+            <div id="decimalInput" class="form-group">
+                <label for="numeroDecimal">Ingresa un número decimal:</label>
+                <input type="number" id="numeroDecimal" class="form-control" placeholder="Número decimal">
+            </div>
 
-        <button onclick="convertirDecimal()">Convertir</button>
+            <div id="baseInput" class="form-group">
+                <label for="base">Ingresa la base (entre 2 y 36):</label>
+                <input type="number" id="base" class="form-control" min="2" max="36" placeholder="Base">
+            </div>
 
-        <div id="resultado"></div>
-    </section>
+            <button onclick="convertirDecimal()" class="btn btn-success btn-block">Convertir</button>
 
-    <section>
-        <h2>Convertidor de base x a decimal</h2>
-        <p>Ingresa un número y su base y conviertela a decimal</p>
-        <div id="base2Input">
-            <label for="numero2">Ingresa un número:</label>
-            <input type="text" id="numero2">
-        </div>
-        <div id="base2Input">
-            <label for="base2">Ingresa la base (entre 2 y 36):</label>
-            <input type="number" id="base2">
-        </div>
-        <button onclick="convertirBaseADecimal()">Convertir</button>
+            <div id="resultado" class="mt-4 text-center"></div>
 
-        <div id="resultado2"></div>
-    </section>
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th>Número Decimal</th>
+                        <th>Base</th>
+                        <th>Resultado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaDecimal"></tbody>
+            </table>
+        </section>
 
-    <section>
-        <h2>Finalizar</h2>
-        <p>Descarga un archivo JSON con el historial de conversiones</p>
-        <p>(Se borraran el historial de calculos realizados.)</p>
-        <button onclick="guardarLSEnArchivo()">Descargar archivo en JSON</button>
-    </section>
-    <script src="preentrega3.js"></script>
+        <section class="card p-4 mb-4">
+            <h2 class="card-title text-center">Convertidor de base x a decimal</h2>
+            <p class="text-center">Ingresa un número y su base y conviértelo a decimal</p>
+            <div id="base2Input" class="form-group">
+                <label for="numero2">Ingresa un número:</label>
+                <input type="text" id="numero2" class="form-control" placeholder="Número">
+            </div>
+            <div id="base2Input" class="form-group">
+                <label for="base2">Ingresa la base (entre 2 y 36):</label>
+                <input type="number" id="base2" class="form-control" placeholder="Base">
+            </div>
+            <button onclick="convertirBaseADecimal()" class="btn btn-success btn-block">Convertir</button>
+
+            <div id="resultado2" class="mt-4 text-center"></div>
+
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Base</th>
+                        <th>Resultado Decimal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaBaseDecimal"></tbody>
+            </table>
+        </section>
+
+        <section class="card p-4 mb-4">
+            <h2 class="card-title text-center">Finalizar</h2>
+            <p class="text-center">Descarga un archivo JSON con el historial de conversiones</p>
+            <p class="text-center">(Se borrará el historial de cálculos realizados.)</p>
+            <button onclick="guardarLSEnArchivo()" class="btn btn-danger btn-block">Descargar archivo en JSON</button>
+        </section>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="final.js"></script>
 </body>
 </html>

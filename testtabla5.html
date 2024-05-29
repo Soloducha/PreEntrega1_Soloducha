@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertidor de Bases</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- Toastify JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div id="bienvenida" class="text-center mb-4"></div>
+
+        <!-- Formulario de inicio de sesión -->
+        <form id="loginForm" class="text-center mb-4" style="display: none;">
+            <div class="form-group">
+                <label for="nombreUsuario">Nombre de Usuario:</label>
+                <input type="text" id="nombreUsuario" class="form-control" placeholder="Ingresa tu nombre">
+            </div>
+            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </form>
+
+        <!-- Botón para cambiar de usuario -->
+        <div class="text-center mb-4">
+            <button id="cambiarUsuario" class="btn btn-warning" style="display: none;">Cambiar Usuario</button>
+        </div>
+
+        <section class="card p-4 mb-4">
+            <h2 class="card-title text-center">Convertidor número decimal a base x</h2>
+            <div id="decimalInput" class="form-group">
+                <label for="numeroDecimal">Ingresa un número decimal:</label>
+                <input type="number" id="numeroDecimal" class="form-control" placeholder="Número decimal">
+            </div>
+
+            <div id="baseInput" class="form-group">
+                <label for="base">Ingresa la base (entre 2 y 36):</label>
+                <input type="number" id="base" class="form-control" min="2" max="36" placeholder="Base">
+            </div>
+
+            <button onclick="convertirDecimal()" class="btn btn-success btn-block">Convertir</button>
+
+            <div id="resultado" class="mt-4 text-center"></div>
+            <table id="tablaDecimal" class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>Decimal</th>
+                        <th>Base</th>
+                        <th>Resultado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card p-4 mb-4">
+            <h2 class="card-title text-center">Convertidor de base x a decimal</h2>
+            <p class="text-center">Ingresa un número y su base y conviertela a decimal</p>
+            <div id="base2Input" class="form-group">
+                <label for="numero2">Ingresa un número:</label>
+                <input type="text" id="numero2" class="form-control" placeholder="Número">
+            </div>
+            <div id="base2Input" class="form-group">
+                <label for="base2">Ingresa la base (entre 2 y 36):</label>
+                <input type="number" id="base2" class="form-control" placeholder="Base">
+            </div>
+            <button onclick="convertirBaseADecimal()" class="btn btn-success btn-block">Convertir</button>
+
+            <div id="resultado2" class="mt-4 text-center"></div>
+            <table id="tablaBaseADecimal" class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Base</th>
+                        <th>Resultado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card p-4 mb-4">
+            <h2 class="card-title text-center">Finalizar</h2>
+            <p class="text-center">Descarga un archivo JSON con el historial de conversiones</p>
+            <p class="text-center">(Se borraran el historial de calculos realizados.)</p>
+            <button onclick="guardarLSEnArchivo()" class="btn btn-danger btn-block">Descargar archivo en JSON</button>
+        </section>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Verificar si hay un nombre de usuario en el localStorage y mostrar un mensaje de bienvenida si existe
+        const nombreUsuario = localStorage.getItem('nombreUsuario');
+        if (nombreUsuario) {
+            document.getElementById('bienvenida').innerText = `¡Bienvenid@, ${nombreUsuario}!`;
+            document.getElementById('cambiarUsuario').style.display = 'inline-block';
+        } else {
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        // Función para guardar el nombre de usuario en el localStorage al enviar el formulario de inicio de sesión
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const nombreUsuario = document.getElementById('nombreUsuario').value.trim();
+            if (nombreUsuario) {
+                localStorage.setItem('nombreUsuario', nombreUsuario);
+                document.getElementById('bienvenida').innerText = `¡Bienvenid@, ${nombreUsuario}!`;
+                document.getElementById('cambiarUsuario').style.display = 'inline-block';
+                document.getElementById('loginForm').style.display = 'none';
+            }
+        });
+
+        // Función para cambiar de usuario al hacer clic en el botón correspondiente
+        document.getElementById('cambiarUsuario').addEventListener('click', function() {
+            localStorage.removeItem('nombreUsuario');
+            document.getElementById('bienvenida').innerText = '';
+            document.getElementById('cambiarUsuario').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+
+            // Llamar a la función para borrar el historial de conversiones
+            borrarHistorialConversiones();
+        });
+
+        function borrarHistorialConversiones() {
+            localStorage.removeItem('historialConversiones');
+            localStorage.removeItem('historialConversionesBaseADecimal');
+            actualizarTablas();
+            Toastify({
+                text: "El historial de conversiones ha sido borrado.",
+                duration: 3000, // Duración en milisegundos
+                close: true, // Muestra un botón de cierre
+                gravity: "top", // Posición de la notificación (top/bottom)
+                position: "right", // Posición horizontal (left/center/right)
+                backgroundColor: "#4CAF50", // Color de fondo
+                className: "toastify-custom", // Clase CSS personalizada
+                stopOnFocus: true, // Detiene el temporizador en caso de enfocar la notificación
+            }).showToast();
+        }
+
+        // Función para guardar el historial de conversiones en el localStorage
+        function guardarConversion(numeroDecimal, base, resultado) {
+            // Obtener el historial de conversiones del localStorage o inicializar un array vacío si no existe
+            let historial = JSON.parse(localStorage.getItem('historialConversiones')) || [];
+            // Agregar la nueva conversión al historial
+            historial.push({
+                decimal: numeroDecimal,
+                base: base,
+                resultado: resultado
+            });
+            // Guardar el historial actualizado en localStorage
+            localStorage.setItem('historialConversiones', JSON.stringify(historial));
+            actualizarTablas();
+        }
+
+        function guardarConversionBaseADecimal(numeroB, base, resultado) {
+            // Obtener el historial de conversiones del localStorage o inicializar un array vacío si no existe
+            let historial = JSON.parse(localStorage.getItem('historialConversionesBaseADecimal')) || [];
+            // Agregar la nueva conversión al historial
+            historial.push({
+                decimal: numeroB,
+                base: base,
+                resultado: resultado
+            });
+            // Guardar el historial actualizado en localStorage
+            localStorage.setItem('historialConversionesBaseADecimal', JSON.stringify(historial));
+            actualizarTablas();
+        }
+
+        function convertirDecimal() {
+            const numeroDecimal = document.getElementById("numeroDecimal").valueAsNumber;
+            let base = document.getElementById("base").valueAsNumber;
+            if (base < 2 || base > 36) {
+                Toastify({
+                    text: "La base debe ser un número entre 2 y 36.",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#FF0000",
+                    stopOnFocus: true,
+                }).showToast();
+                return;
+            }
+            const resultado = numeroDecimal.toString(base).toUpperCase();
+            document.getElementById("resultado").innerText = `El número ${numeroDecimal} en base ${base} es: ${resultado}`;
+            guardarConversion(numeroDecimal, base, resultado);
+        }
+
+        function convertirBaseADecimal() {
+            const numeroB = document.getElementById("numero2").value.trim();
+            let base = document.getElementById("base2").valueAsNumber;
+            if (base < 2 || base > 36) {
+                Toastify({
+                    text: "La base debe ser un número entre 2 y 36.",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#FF0000",
+                    stopOnFocus: true,
+                }).showToast();
+                return;
+            }
+            const resultado = parseInt(numeroB, base);
+            document.getElementById("resultado2").innerText = `El número ${numeroB} en base ${base} convertido a decimal es: ${resultado}`;
+            guardarConversionBaseADecimal(numeroB, base, resultado);
+        }
+
+        function actualizarTablas() {
+            const historialDecimal = JSON.parse(localStorage.getItem('historialConversiones')) || [];
+            const historialBaseADecimal = JSON.parse(localStorage.getItem('historialConversionesBaseADecimal')) || [];
+
+            // Actualizar tabla de conversiones de decimal a base x
+            const tbodyDecimal = document.getElementById("tablaDecimal").getElementsByTagName("tbody")[0];
+            tbodyDecimal.innerHTML = ''; // Limpiar tabla
+            historialDecimal.forEach((conversion, index) => {
+                const row = tbodyDecimal.insertRow();
+                row.insertCell(0).innerText = conversion.decimal;
+                row.insertCell(1).innerText = conversion.base;
+                row.insertCell(2).innerText = conversion.resultado;
+                const acciones = row.insertCell(3);
+                const btnEliminar = document.createElement("button");
+                btnEliminar.innerText = "Eliminar";
+                btnEliminar.classList.add("btn", "btn-danger", "btn-sm");
+                btnEliminar.onclick = function() {
+                    historialDecimal.splice(index, 1);
+                    localStorage.setItem('historialConversiones', JSON.stringify(historialDecimal));
+                    actualizarTablas();
+                };
+                acciones.appendChild(btnEliminar);
+            });
+
+            // Actualizar tabla de conversiones de base x a decimal
+            const tbodyBaseADecimal = document.getElementById("tablaBaseADecimal").getElementsByTagName("tbody")[0];
+            tbodyBaseADecimal.innerHTML = ''; // Limpiar tabla
+            historialBaseADecimal.forEach((conversion, index) => {
+                const row = tbodyBaseADecimal.insertRow();
+                row.insertCell(0).innerText = conversion.decimal;
+                row.insertCell(1).innerText = conversion.base;
+                row.insertCell(2).innerText = conversion.resultado;
+                const acciones = row.insertCell(3);
+                const btnEliminar = document.createElement("button");
+                btnEliminar.innerText = "Eliminar";
+                btnEliminar.classList.add("btn", "btn-danger", "btn-sm");
+                btnEliminar.onclick = function() {
+                    historialBaseADecimal.splice(index, 1);
+                    localStorage.setItem('historialConversionesBaseADecimal', JSON.stringify(historialBaseADecimal));
+                    actualizarTablas();
+                };
+                acciones.appendChild(btnEliminar);
+            });
+        }
+
+        function guardarLSEnArchivo() {
+            const historialDecimal = JSON.parse(localStorage.getItem('historialConversiones')) || [];
+            const historialBaseADecimal = JSON.parse(localStorage.getItem('historialConversionesBaseADecimal')) || [];
+            const data = {
+                historialDecimal: historialDecimal,
+                historialBaseADecimal: historialBaseADecimal
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "historial_conversiones.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+
+            localStorage.removeItem('historialConversiones');
+            localStorage.removeItem('historialConversionesBaseADecimal');
+            actualizarTablas();
+            Toastify({
+                text: "El historial ha sido guardado y borrado.",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#4CAF50",
+                stopOnFocus: true,
+            }).showToast();
+        }
+
+        // Cargar las tablas con datos del localStorage al cargar la página
+        document.addEventListener('DOMContentLoaded', (event) => {
+            actualizarTablas();
+        });
+
+    </script>
+</body>
+</html>
